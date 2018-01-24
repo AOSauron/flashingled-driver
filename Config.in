@@ -1,0 +1,4 @@
+config BR2_PACKAGE_FLASHINGLED
+    bool FLASHINGLED
+            help
+                Pilote d'une led à 4 pins, la faisant clignoter à activation (1), l'éteignant à désactivation (0)
