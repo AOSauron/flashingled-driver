@@ -1,6 +1,7 @@
-obj-m := falshingled.o
+obj-m := flashingled.o
 flashingled-objs := src/driver.o \
-				    src/pinout.o
+				    src/pinout.o \
+					src/flashled.o
 
 SRC := $(shell pwd)
 

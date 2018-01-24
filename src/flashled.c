@@ -46,22 +46,11 @@ static ssize_t flashled_write(struct file *file, const char __user *data, size_t
 // ========================================================================= //
 //                             KERNEL SPACE FUNCTIONS                        //
 // ========================================================================= //
-#define INTERVAL 1e6  // Basic interval obtained when power_on = 1. Will be mux by power_on to get a greater interval.
+#define INTERVAL 1e4  // 100 ms : Minimal interval obtained when power_on = 1. Will be mux by power_on to get a greater interval.
 
 static struct flashled* flashled_inst = NULL;
 static struct hrtimer flashled_timer;
 static char current_color = 0; // 0 is color 1, 1 is color 2, 2 is color 3.
-
-/**
- * @brief Array of function pointers to the different functions used to
- * display a color (or not) with the led.
- */
-static void (*flashled_helper []) (const struct flashled *) = {
-    &display_color_1,
-    &display_color_2,
-    &display_color_3,
-    &display_off
-};
 
 /**
  * @brief This function is a callback used to update the led with
@@ -69,16 +58,19 @@ static void (*flashled_helper []) (const struct flashled *) = {
  */
 static enum hrtimer_restart flashled_timer_callback(struct hrtimer *arg) { 
     
-    // Adjusting the interval with the coef power_on
+    ktime_t curr_time, interval;
     uint64_t adjusted_interval;
+
+    // Adjusting the interval with the coef power_on
     uint64_t coef = flashled_inst->power_on;
     if (coef > 0) {
 	adjusted_interval = INTERVAL * coef;
     }
     else adjusted_interval = INTERVAL;
 
-    ktime_t curr_time = ktime_get(), interval = ktime_set(0, adjusted_interval);
-    uint8_t unit, decade, hundred;
+    // Time parameters setting
+    curr_time = ktime_get();
+    interval = ktime_set(0, adjusted_interval);
 
     // Reset the led to avoid color superposition
     display_off(flashled_inst);
@@ -87,13 +79,13 @@ static enum hrtimer_restart flashled_timer_callback(struct hrtimer *arg) {
     if (coef > 0) {
 	    switch (current_color) {
 		case 0: // Color 1
-		    display_color_1(display_inst);
+		    display_color_1(flashled_inst);
 		    break;
 		case 1: // Color 2
-		    display_color_2(display_inst);
+		    display_color_2(flashled_inst);
 		    break;
 		case 2: // Color 3
-		    display_color_3(display_inst);
+		    display_color_3(flashled_inst);
 		    break;
 		default:
 		    break;
@@ -118,9 +110,9 @@ struct flashled* get_flashled_inst(void) {
         flashled_inst = kmalloc(sizeof(struct flashled), GFP_KERNEL);
 
         // PIN numbers affectation
-        flashled_inst->1_color_pin = COLOR_1;
-        flashled_inst->2_color_pin = COLOR_2;
-        flashled_inst->3_color_pin = COLOR_3;
+        flashled_inst->color_1_pin = COLOR_1;
+        flashled_inst->color_2_pin = COLOR_2;
+        flashled_inst->color_3_pin = COLOR_3;
 
         // Initialize the state of the led (to light off).
         flashled_inst->power_on = 0;
@@ -141,7 +133,7 @@ struct flashled* get_flashled_inst(void) {
  * @brief Free the unique instance of the display handle.
  */
 void free_flashled_inst(void) {
-    if (dflashled_inst != NULL) {
+    if (flashled_inst != NULL) {
         hrtimer_cancel(&flashled_timer);
 
         kfree(flashled_inst);
@@ -195,31 +187,31 @@ void flashled_free(void) {
 // Display the first color (disable others)
 void display_color_1(const struct flashled *inst)
 {
-    gpio_set_value(inst->1_color_pin, VALUE_ON);
-    gpio_set_value(inst->2_color_pin, VALUE_OFF);
-    gpio_set_value(inst->3_color_pin, VALUE_OFF);
+    gpio_set_value(inst->color_1_pin, VALUE_ON);
+    gpio_set_value(inst->color_2_pin, VALUE_OFF);
+    gpio_set_value(inst->color_3_pin, VALUE_OFF);
 }
 
 // Display the first color (disable others)
 void display_color_2(const struct flashled *inst)
 {
-    gpio_set_value(inst->1_color_pin, VALUE_OFF);
-    gpio_set_value(inst->2_color_pin, VALUE_ON);
-    gpio_set_value(inst->3_color_pin, VALUE_OFF);
+    gpio_set_value(inst->color_1_pin, VALUE_OFF);
+    gpio_set_value(inst->color_2_pin, VALUE_ON);
+    gpio_set_value(inst->color_3_pin, VALUE_OFF);
 }
 
 // Display the first color (disable others)
 void display_color_3(const struct flashled *inst)
 {
-    gpio_set_value(inst->1_color_pin, VALUE_OFF);
-    gpio_set_value(inst->2_color_pin, VALUE_OFF);
-    gpio_set_value(inst->3_color_pin, VALUE_ON);
+    gpio_set_value(inst->color_1_pin, VALUE_OFF);
+    gpio_set_value(inst->color_2_pin, VALUE_OFF);
+    gpio_set_value(inst->color_3_pin, VALUE_ON);
 }
 
 // Disable all colors
 void display_off(const struct flashled *inst)
 {
-    gpio_set_value(inst->1_color_pin, VALUE_OFF);
-    gpio_set_value(inst->2_color_pin, VALUE_OFF);
-    gpio_set_value(inst->3_color_pin, VALUE_OFF);
+    gpio_set_value(inst->color_1_pin, VALUE_OFF);
+    gpio_set_value(inst->color_2_pin, VALUE_OFF);
+    gpio_set_value(inst->color_3_pin, VALUE_OFF);
 }

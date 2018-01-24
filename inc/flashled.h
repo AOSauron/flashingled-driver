@@ -2,9 +2,9 @@
 #define __FLASHLED_H__
 
 struct flashled {
-    unsigned int 1_color_pin;     /*!< PIN to handle the first color of the led. */
-    unsigned int 2_color_pin;     /*!< PIN to handle the second color of the led.*/
-    unsigned int 3_color_pin;     /*!< PIN to handle the third color of the led. */
+    unsigned int color_1_pin;     /*!< PIN to handle the first color of the led. */
+    unsigned int color_2_pin;     /*!< PIN to handle the second color of the led.*/
+    unsigned int color_3_pin;     /*!< PIN to handle the third color of the led. */
 
     uint64_t power_on;      	  /*!< If = 0, turn off the light. Else, turn it on : the bigger 
 					it is the lower will be the frequency of the flash.*/
