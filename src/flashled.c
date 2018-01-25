@@ -9,6 +9,7 @@
 #include <linux/string.h>
 #include <linux/ktime.h>
 #include <linux/timer.h>
+#include <linux/errno.h>
 #
 #include "../inc/pinout.h"
 #include "../inc/flashled.h"
@@ -33,8 +34,15 @@ static struct file_operations flashled_fops = {
 static ssize_t flashled_write(struct file *file, const char __user *data, size_t size, loff_t *loff) {
     char *buf = kmalloc(size, GFP_KERNEL);
 
-    if (copy_from_user(buf, data, 8) > 0) {
-        return -1;
+    // Checking data received from user (1 Byte)
+    if (sizeof(data) != 1) {
+     	kfree(buf);
+	return -EINVAL;
+    }
+	
+    if (copy_from_user(buf, data, 1) > 0) {
+	kfree(buf);
+        return -ENOBUFS;
     }
 
     get_flashled_inst()->power_on = ((uint64_t) *buf);
@@ -146,10 +154,11 @@ void free_flashled_inst(void) {
  */
 int flashled_init(void) {
     // Getting a major for the peripheral.
-    if ((flashled_major = register_chrdev(0, "flashled", &flashled_fops)) <= 0) {
+    flashled_major = register_chrdev(0, "flashled", &flashled_fops)
+    if (flashled_major <= 0) {
         printk(KERN_ERR"(1) Error while initializing the peripheral... :(\n");
 
-        return -1;
+        return flashled_major; // Should be -EINVAL or -EBUSY
     }
 
     // Creating a class for the device and so on...
@@ -159,7 +168,7 @@ int flashled_init(void) {
 
         unregister_chrdev(flashled_major, "flashled");
 
-        return -1;
+        return -EFAULT;
     }
 
     flashled_devt = MKDEV(flashled_major, 0);

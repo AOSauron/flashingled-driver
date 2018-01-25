@@ -5,6 +5,8 @@
 #include "../inc/pinout.h"
 #include "../inc/flashled.h"
 
+// LOLOLOL
+
 /**
  * @brief Initialize the driver that handles the flashing led.
  */
@@ -17,7 +19,6 @@ static int __init flashled_driver_init(void) {
 
     if (flashled_init() != 0x0) {
         pinout_free();
-
         return -1;
     }
 
