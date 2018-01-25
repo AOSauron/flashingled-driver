@@ -1,7 +1,6 @@
 
 #include <linux/kernel.h>
 #include <linux/gpio.h>
-#include <linux/delay.h>
 #include <linux/fs.h>
 #include <linux/device.h>
 #include <linux/slab.h>
@@ -154,7 +153,7 @@ void free_flashled_inst(void) {
  */
 int flashled_init(void) {
     // Getting a major for the peripheral.
-    flashled_major = register_chrdev(0, "flashled", &flashled_fops)
+    flashled_major = register_chrdev(0, "flashled", &flashled_fops);
     if (flashled_major <= 0) {
         printk(KERN_ERR"(1) Error while initializing the peripheral... :(\n");
 
