@@ -34,17 +34,10 @@ Initialement elle est fixée  *100ms*. Si l'utilisateur renseigne **0**, le LED 
 
 Les GPIOs utilisées sur l'Olimex sont les suivantes (N° de PIN physiques) :
 
-    - GND
+    - 3V3
     - PIN 13
     - PIN 14
     - PIN 15
-    - PIN 16
-    - PIN 17
-    - PIN 24
-    - PIN 26
-    - PIN 28
-    - PIN 28
-    - PIN 30
 
 ## Spécification du circuit électrique utilisé
 
