@@ -8,7 +8,7 @@ Ce répertoire contient un driver pour Linux embarqué dont la cible est une car
 
 Ce driver fait clignoter successivement la LED sur ses 3 couleurs possibles.
 
-Celui-ci met à disposition un fichier virtuel disponible par l'intermédiaire du chemin suivant `/dev/flashled` et accessible en écriture seule.
+Celui-ci met à disposition un fichier virtuel disponible par l'intermédiaire du chemin suivant `/dev/` et accessible en écriture seule.
 
 ## Utilisation
 
