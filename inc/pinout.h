@@ -9,8 +9,12 @@
 #define COLOR_2     PIN_14    /*!< Color 2 */
 #define COLOR_3     PIN_15    /*!< Color 3 */
 
-#define VALUE_OFF   0x0       /*!< Alias on OFF state of a pin. */
-#define VALUE_ON    0x1       /*!< Alias on ON state of a pin. */
+/*
+ * Warning : common cathode, so those PINs are anodes
+ */
+
+#define VALUE_OFF   0x1       /*!< Alias on OFF state of a pin. */
+#define VALUE_ON    0x0       /*!< Alias on ON state of a pin. */
 
 int pinout_init(void);
 void pinout_free(void);
