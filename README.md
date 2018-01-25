@@ -18,7 +18,7 @@ Pour activer la LED clignotante, utilisez la commande suivante :
 dd if=/dev/flashled of=INTEGER bs=1 count=1
 ```
 
-Où INTEGER est un entier. La fréquence de clignotement de la LED est inversement proportionnelle à cet entier. Autrement dit, plus cet entier est grand, moins la LED clignotera vite.
+Où `INTEGER` est un entier. La fréquence de clignotement de la LED est inversement proportionnelle à cet entier. Autrement dit, plus cet entier est grand, moins la LED clignotera vite.
 
 Si cet entier vaut 0, la LED s'éteint.
 
